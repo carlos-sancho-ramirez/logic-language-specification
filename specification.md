@@ -10,27 +10,37 @@ This language has these objectives in mind:
 * Enforce best practises regarding the use of upper and lower cases.
 * Abstract variable limits: So the developer should not care if the integer value is using 8 bits or 32 bits of memory. This allow the compiler take decisions to make the solution more efficient in speed or memory in use, and allow the developer to focus in the actual business logic.
 * Abstract variable units: So the developer can use 3 booleans in a single register without thinking in optimizations like composing an integer and use each bit as a boolean instead.
-* Exclude mutability: Developers will deal with a bunch of constants, but no variables where values can change.
+* Exclude mutability: Developers will deal with a bunch of constants, but no variables where values can change. This simplifies the readability and reduces the complexity of the code.
 * Avoid memory handling as much as possible. Developers should not care when a variable is allocated or removed from memory. They should not care either if variables are located in the heap, the stack or registers.
 
 ## Basic syntax
 
-Code can be parsed as a list of token, all of them separated by an arbitrary combination of whitespaces, tabs, carriage return characters or new line characters.
+Code can be parsed as a list of tokens. Tokens may be operators, references or literals.
+
+Tokens whose nature (operators vs references) that do not share possible characters may not require explicit separation.
+However, tokens of the same nature must be separated by an arbitrary combination of whitespaces, tabs, carriage return characters or new line characters.
 Compilers will ignore the indentation used by the developer, or where a line breaks appear.
 
-However, the language is case-sensitive, and compilers can rely in the nature of each token by checking its case.
+This language is case-sensitive, and compilers can rely in the nature of each token by checking its case.
 These are the 5 types of token that can be found:
 
   * Keywords: a set of reserved English words. All its characters will be from *a* to *z*, all in lower case, no cyphers nor symbols are allowed.
-  * Constant names: Constants created by the developer to assign expressions on it. This follow the format known as camel-case. So, they must start with a lower-case character from *a* to *z* and may be followed by any arbitrary number of upper or lower case character from *a* to *z* or cyphers from *0* to *9*. Other symbols (even the underscore) are forbidden.
-  * Types: Developer defined and built-in types. This follow the format known as Pascal-case. So, they must start with an upper-cased character from *A* to *Z* followed by any arbitrary number of upper or lower cased characters from *a* to *z* or cyphers from *0* to *9*. Type must include at least 1 lower-cased character, in order compilers can distinguish types from constants.
-  * Constants: name that have a implicit value assigned. They must have at least 2 characters. They must start with an upper case from *A* to *Z*, and followed by one or more upper-cased characters from *A* to *Z* or the underscore character to separate words.
+  * Constant names: Constants created by the developer to assign expressions on it and enforce reusability. They follow the format known as camel-case. So, they must start with a lower-case character from *a* to *z* and may be followed by any arbitrary number of upper or lower case character from *a* to *z* or cyphers from *0* to *9*. Other symbols (even the underscore) are forbidden.
+  * Types: Developer defined and built-in types. This follow the format known as Pascal-case. So, they must start with an upper-cased character from *A* to *Z* followed by any arbitrary number of upper or lower cased characters from *a* to *z* or cyphers from *0* to *9*. Type must include at least 1 lower-cased character, in order compilers can distinguish types from enumeration values.
+  * Enumeration values: name that belong to a set of possibilities and have a implicit value assigned. They must have at least 2 characters. They must start with an upper case from *A* to *Z*, and followed by one or more upper-cased characters from *A* to *Z* or the underscore character to separate words.
+  * Literals: Specifies a constant value. The can be integer, character or string literals.
+    * Integer literals: Defines a integer numeric value. They must start with a cypher (character from *0* to *9*), or the minus sign (-) in case of a negative number. This token ends whenever any other character that is not a cypher is found.
+    * Character literal: It starts and ends with the single quote symbol ('), and can only contain one character between the quotes. Compilers should convert its codepoint into an integer and treat it like any integer literal.
+    * String literal: It starts and ends with the double quote symbol ("). There can be any arbitrary number of characters between the quotes, even 0. This is sugar, and compilers should convert this literal into an array construction of characters.
   * Operators: a set of symbols reserved to perform logical, math or other operations among the tokens.
 
 ### Keywords
 
-All reserved words within the language are expected to be short one-word tokens.
-All of them, fully written in lower case.
+All reserved words within the language are expected to be short one-word tokens. All of them, fully written in lower case.
+
+Unluckily, we are unsure on which keywords will be included in future versions of the language,
+so there is a potential risk that old code may use keywords not defined before as constant names.
+Compilers should consider any keyword as reserved and raise an error in case the developer uses any of the keyword as constant name.
 
 This is the list of all keywords defined (sorted alphabetically):
 * else
@@ -40,7 +50,7 @@ This is the list of all keywords defined (sorted alphabetically):
 
 ### Operators
 
-Operator are symbols used to provide define arithmetic or logical operators, comparisons and others.
+Operator are symbols used to define arithmetic or logical operators, comparisons and others.
 There is a precedence order that any compiler should follow. If operators are in the same level of precedence, the compiler will execute them left to right.
 
 #### Precedence level 0: Precedence orchestrators
@@ -161,21 +171,20 @@ This allows the concatenation of several statements.
 
 The colon is used to define type explicitly.
 
-### Predefined constants
+### Enumeration constants
 
-Predefined constants names are always all in uppercase, and must be at least 2 characters long.
+Enumeration constants names are always all in uppercase, and must be at least 2 characters long.
+
+Currently only the Boolean type is built-in defined, whose values are:
 
     TRUE
     FALSE
-
-It is intended that developers will be able to define its own constants in future versions.
-But currently, the language does not allow it, and only specifies *TRUE* and *FALSE*, which are the 2 possibilities of a Boolean type.
 
 These constants con be used to compare values against them.
 
 ### Types
 
-All names for types in this language must start with upper-case, and must contain at least one lower case character. This is required distinguish them from any constant, where all its characters are upper-case.
+All references for types in this language must start with upper-case, and must contain at least one lower case character. This is required distinguish them from any enumeration constant, where all its characters are upper-case.
 
 This is the list of built-in types (sorted alphabetically):
 
