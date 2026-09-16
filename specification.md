@@ -17,7 +17,7 @@ This language has these objectives in mind:
 
 Code can be parsed as a list of tokens. Tokens may be operators, references or literals.
 
-Tokens whose nature (operators vs references) that do not share possible characters may not require explicit separation.
+Tokens whose nature (operators vs references) do not share possible characters may not require explicit separation.
 However, tokens of the same nature must be separated by an arbitrary combination of whitespaces, tabs, carriage return characters or new line characters.
 Compilers will ignore the indentation used by the developer, or where a line breaks appear.
 
@@ -26,12 +26,12 @@ These are the 5 types of token that can be found:
 
   * Keywords: a set of reserved English words. All its characters will be from *a* to *z*, all in lower case, no cyphers nor symbols are allowed.
   * Constant names: Constants created by the developer to assign expressions on it and enforce reusability. They follow the format known as camel-case. So, they must start with a lower-case character from *a* to *z* and may be followed by any arbitrary number of upper or lower case character from *a* to *z* or cyphers from *0* to *9*. Other symbols (even the underscore) are forbidden.
-  * Types: Developer defined and built-in types. This follow the format known as Pascal-case. So, they must start with an upper-cased character from *A* to *Z* followed by any arbitrary number of upper or lower cased characters from *a* to *z* or cyphers from *0* to *9*. Type must include at least 1 lower-cased character, in order compilers can distinguish types from enumeration values.
-  * Enumeration values: name that belong to a set of possibilities and have a implicit value assigned. They must have at least 2 characters. They must start with an upper case from *A* to *Z*, and followed by one or more upper-cased characters from *A* to *Z* or the underscore character to separate words.
-  * Literals: Specifies a constant value. The can be integer, character or string literals.
-    * Integer literals: Defines a integer numeric value. They must start with a cypher (character from *0* to *9*), or the minus sign (-) in case of a negative number. This token ends whenever any other character that is not a cypher is found.
+  * Types: Developer defined and built-in types. This follow the format known as Pascal-case. So, they must start with an upper-cased character from *A* to *Z* followed by any arbitrary number of upper or lower cased characters from *a* to *z* or cyphers from *0* to *9*.
+  * Enumeration values: name that belongs to a set of possibilities and have a implicit value assigned. They must start with an upper case from *A* to *Z*, and followed by one or more upper-cased characters from *A* to *Z* or the underscore character to separate words. They must have at least 2 characters, this will allow developers, parsing tools or compilers to distinguish it from a type reference.
+  * Literals: Specifies a constant value. They can be integer, character or string literals.
+    * Integer literals: Defines a integer numeric value. They must start with a cypher (character from *0* to *9*), or the minus sign (-) followed by a cypher in case of a negative number. This language admits hexadecimal literals by starting the literal with *0x*. Except for the explicit zero value, starting an integer literal with *0* which is not followed by a *x* is not allowed and compilers should complain here. These guarantees that it can be extended in the future in case of being required. This token ends whenever any space, tab, carriage-return, new-line, operator or separator is found. If any other character, or a character from *a* to *z* or *A* to *Z* is attached to the end of this token, compilers should complain as well.
     * Character literal: It starts and ends with the single quote symbol ('), and can only contain one character between the quotes. Compilers should convert its codepoint into an integer and treat it like any integer literal.
-    * String literal: It starts and ends with the double quote symbol ("). There can be any arbitrary number of characters between the quotes, even 0. This is sugar, and compilers should convert this literal into an array construction of characters.
+    * String literal: It starts and ends with the double quote symbol ("). There can be any arbitrary number of characters between the quotes, even 0. This is sugar, and compilers should convert this literal into a construction of an array of characters.
   * Operators: a set of symbols reserved to perform logical, math or other operations among the tokens.
 
 ### Keywords
@@ -43,10 +43,10 @@ so there is a potential risk that old code may use keywords not defined before a
 Compilers should consider any keyword as reserved and raise an error in case the developer uses any of the keyword as constant name.
 
 This is the list of all keywords defined (sorted alphabetically):
-* else
-* if
-* then
-* type
+  * else
+  * if
+  * then
+  * type
 
 ### Operators
 
@@ -201,4 +201,3 @@ Examples:
     Array[Int[32..127]]
 
 *String* is a shortcut (sugar) for *Array[Int]*.
-
